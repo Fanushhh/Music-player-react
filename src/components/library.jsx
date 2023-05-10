@@ -4,6 +4,7 @@ export default function Library({
   songs,
   setCurrentSong,
   setIsPlaying,
+  isPlaying,
   audio,
   setSongs,
   libraryStatus,
@@ -15,6 +16,7 @@ export default function Library({
         <LibrarySong
           audio={audio}
           setIsPlaying={setIsPlaying}
+          isPlaying={isPlaying}
           songs={songs}
           setCurrentSong={setCurrentSong}
           id={song.id}

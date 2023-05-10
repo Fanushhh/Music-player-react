@@ -3,6 +3,7 @@ import React from "react";
 export default function LibrarySong({
   song,
   songs,
+  isPlaying,
   setCurrentSong,
   setIsPlaying,
   audio,
@@ -11,8 +12,7 @@ export default function LibrarySong({
 }) {
   const handleChangeSong = async () => {
     await setCurrentSong(song);
-    audio.current.play();
-    setIsPlaying(true);
+
     const newSongs = songs.map((song) => {
       if (song.id === id) {
         return {
@@ -26,7 +26,8 @@ export default function LibrarySong({
         };
       }
     });
-    setSongs(newSongs);
+    await setSongs(newSongs);
+    if (isPlaying) audio.current.play();
   };
 
   return (

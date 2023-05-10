@@ -1,5 +1,5 @@
 import "./styles/app.scss";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Player from "./components/player";
 import Song from "./components/song";
 import "./styles/app.scss";
@@ -18,19 +18,36 @@ function App() {
   const [songInfo, setSongInfo] = useState({
     currentTime: 0,
     duration: 0,
+    animationProc: 0,
   });
+
   //time handler
   const timeHandler = (e) => {
     const current = e.target.currentTime;
     const duration = e.target.duration;
-
-    setSongInfo({ ...songInfo, currentTime: current, duration: duration });
+    const roundedCurrent = Math.round(current);
+    const durationCurrent = Math.round(duration);
+    const animationProc = Math.round((roundedCurrent / durationCurrent) * 100);
+    setSongInfo({
+      ...songInfo,
+      currentTime: current,
+      duration: duration,
+      animationProc,
+    });
   };
 
-  // time update state
+  const handleEndSong = async () => {
+    const currentIndex = songs.findIndex((song) => song.id === currentSong.id);
+    await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
+    setTimeout(() => {
+      if (isPlaying) {
+        audioRef.current.play();
+      }
+    }, 500);
+  };
 
   return (
-    <>
+    <div className={`App ${libraryStatus ? "library-active" : ""}`}>
       <Nav libraryStatus={libraryStatus} setLibraryStatus={setLibraryStatus} />
       <Song song={currentSong} />
       <Player
@@ -51,14 +68,16 @@ function App() {
         setCurrentSong={setCurrentSong}
         setSongs={setSongs}
         libraryStatus={libraryStatus}
+        isPlaying={isPlaying}
       />
       <audio
         onLoadedMetadata={timeHandler}
         onTimeUpdate={timeHandler}
         ref={audioRef}
         src={currentSong.audio}
+        onEnded={handleEndSong}
       />
-    </>
+    </div>
   );
 }
 

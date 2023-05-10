@@ -64,33 +64,42 @@ export default function Player({
     });
     if (direction === "skip-forward") {
       await setCurrentSong(songs[(currentIndex + 1) % songs.length]);
-      setIsPlaying(true);
     }
     if (direction === "skip-back") {
       if ((currentIndex - 1) % songs.length === -1) {
         await setCurrentSong(songs[songs.length - 1]);
-        setIsPlaying(true);
-        audioRef.current.play();
+        if (isPlaying) audioRef.current.play();
         return;
       }
       await setCurrentSong(songs[(currentIndex - 1) % songs.length]);
-      setIsPlaying(true);
     }
-    audioRef.current.play();
+    if (isPlaying) audioRef.current.play();
+  };
+
+  const animateStyle = {
+    transform: `translateX(${songInfo.animationProc}%)`,
   };
   return (
     <div className="player">
       <h1>Player</h1>
       <div className="time-control">
         <p>{getTime(songInfo.currentTime)}</p>
-        <input
-          min={0}
-          onChange={dragHandler}
-          max={JSON.stringify(songInfo.duration)}
-          value={songInfo.currentTime}
-          type="range"
-        />
-        <p>{getTime(songInfo.duration)}</p>
+        <div
+          className="track"
+          style={{
+            background: `linear-gradient(to right, ${currentSong.colors[0]}, ${currentSong.colors[1]})`,
+          }}
+        >
+          <input
+            min={0}
+            onChange={dragHandler}
+            max={songInfo.duration || 0}
+            value={songInfo.currentTime}
+            type="range"
+          />
+          <div className="animation" style={animateStyle}></div>
+        </div>
+        <p>{songInfo.duration ? getTime(songInfo.duration) : "0:00"}</p>
       </div>
       <div className="play-control">
         <FontAwesomeIcon

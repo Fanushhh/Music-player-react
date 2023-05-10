@@ -20,3 +20,10 @@ h3 {
 body {
   font-family: "Poppins", sans-serif;
 }
+
+.App {
+  transition: all 500ms ease-in-out;
+}
+.library-active {
+  margin-left: 30%;
+}
